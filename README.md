@@ -169,6 +169,6 @@ landslide/demo.py      offline smoke test
 ```
 ## 10. Contributors
 ```
-- @mlaasya07 - frontend and model enhacing
+- @mlaasya07 - frontend and model enhancing
 - 
 ```
