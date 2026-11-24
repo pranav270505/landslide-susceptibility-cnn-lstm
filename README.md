@@ -167,3 +167,8 @@ landslide/mapping.py   step 8   susceptibility map
 landslide/rainfall.py  rainfall download and lookup
 landslide/demo.py      offline smoke test
 ```
+## 10. Contributors
+```
+- @mlaasya07 - frontend and model enhacing
+- 
+```
