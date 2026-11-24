@@ -76,14 +76,18 @@ and `data/processed`.
 
 ## 6. Data sources
 
-| Layer | Source | Resolution |
-|---|---|---|
-| Elevation, slope, aspect, TWI, SPI, distance to rivers | Copernicus GLO-30 DEM (AWS open data) | 30 m |
-| NDVI | Landsat 8 Collection 2 Level-2, Jan-Mar 2018 (Microsoft Planetary Computer) | 30 m |
-| Land use / land cover | ESA WorldCover 2020 (AWS open data) | 10 m, resampled |
-| Distance to roads | OpenStreetMap (Overpass API) | vector |
-| Daily rainfall, mean annual rainfall | Open-Meteo archive (ERA5 reanalysis) | about 10-25 km |
-| Landslides | Hao et al. 2020 inventory | points |
+The `data/` folder (about 625 MB) is not stored in this repository. `python run.py download`
+fetches everything below automatically, except the landslide inventory, which you
+download by hand (section 3).
+
+| Layer | Source | Resolution | Link |
+|---|---|---|---|
+| Elevation, slope, aspect, TWI, SPI, distance to rivers | Copernicus GLO-30 DEM (AWS open data) | 30 m | https://registry.opendata.aws/copernicus-dem/ |
+| NDVI | Landsat 8 Collection 2 Level-2, Jan-Mar 2018 (Microsoft Planetary Computer) | 30 m | https://planetarycomputer.microsoft.com/dataset/landsat-c2-l2 |
+| Land use / land cover | ESA WorldCover 2020 (AWS open data) | 10 m, resampled | https://esa-worldcover.org/en |
+| Distance to roads | OpenStreetMap (Overpass API) | vector | https://overpass-api.de (bulk alternative: https://download.geofabrik.de/asia/india/southern-zone.html) |
+| Daily rainfall, mean annual rainfall | Open-Meteo archive (ERA5 reanalysis) | about 10-25 km | https://open-meteo.com/en/docs/historical-weather-api |
+| Landslides | Hao et al. 2020 inventory | points | https://doi.org/10.17026/dans-x6c-y7x2 |
 
 None of these need an account or API key. If the OpenStreetMap servers refuse
 the roads query, save any roads layer as `data/raw/roads.shp` (for example
