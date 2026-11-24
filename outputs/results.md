@@ -1,0 +1,11 @@
+| Model | Accuracy | Precision | Recall | F1 | AUC | Spec. spatial neg | Spec. temporal neg |
+|---|---|---|---|---|---|---|---|
+| CNN-LSTM (hybrid) | 0.936 | 0.945 | 0.93 | 0.937 | 0.986 | 0.858 | 1.0 |
+| CNN-only | 0.675 | 0.623 | 0.935 | 0.748 | 0.693 | 0.858 | 0.079 |
+| LSTM-only | 0.878 | 0.909 | 0.85 | 0.878 | 0.969 | 0.777 | 1.0 |
+| Random Forest | 0.949 | 0.955 | 0.946 | 0.951 | 0.99 | 0.885 | 1.0 |
+| MLP | 0.943 | 0.943 | 0.946 | 0.944 | 0.989 | 0.858 | 0.995 |
+| SVM | 0.952 | 0.942 | 0.966 | 0.954 | 0.99 | 0.851 | 0.995 |
+| Decision Tree | 0.933 | 0.94 | 0.93 | 0.935 | 0.958 | 0.845 | 1.0 |
+
+Test set: 748 samples (386 landslide, 148 spatial negatives, 214 temporal negatives), held-out spatial blocks. 'Spec.' columns = share of that kind of negative correctly rejected.

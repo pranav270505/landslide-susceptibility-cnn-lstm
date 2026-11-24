@@ -1,0 +1,65 @@
+# Landslide CNN-LSTM pipeline configuration.
+# All paths are relative to the folder this file is in.
+
+study_area:
+  name: Idukki
+  bbox: [76.62, 9.25, 77.42, 10.35]   # west, south, east, north (degrees)
+  crs: "EPSG:32643"                   # UTM zone 43N (Kerala)
+  resolution: 30                      # metres
+
+inventory:
+  dir: data/raw/inventory             # put landslide files here (.shp/.gpkg/.geojson/.kml/.csv)
+  default_event_date: "2018-08-16"    # used when a file has no date column
+  date_column: null                   # e.g. "date"; null = auto-detect, else default_event_date
+  lat_column: null                    # CSV only; null = auto-detect
+  lon_column: null
+
+rainfall:
+  start: "2010-01-01"
+  end: "2018-12-31"
+  window_days: 30                     # antecedent window fed to the LSTM
+  cell_deg: 0.1                       # rainfall is fetched once per 0.1 degree cell
+
+ndvi:
+  date_range: "2018-01-01/2018-03-31" # pre-event dry season, so landslide scars cannot leak in
+  max_cloud: 10
+  max_scenes: 12
+
+roads:
+  classes: "motorway|trunk|primary|secondary|tertiary|unclassified"
+
+factors:
+  stream_threshold_cells: 1000        # flow accumulation above this = river (about 0.9 km2)
+
+samples:
+  patch_size: 32                      # 32 x 32 pixels = 960 m
+  negative_buffer_m: 1000             # spatial negatives stay this far from any landslide
+  temporal_negative_fraction: 0.5     # share of negatives that are "same slope, different date"
+  temporal_negative_years: [2010, 2017]
+  temporal_negative_months: [6, 7, 8, 9]
+  split_method: block                 # "block" (spatial, honest) or "random" (as in the base paper)
+  block_km: 5                         # block size for the spatial split
+  split: [0.70, 0.15, 0.15]
+  max_positives: null                 # cap the number of landslides used (null = all)
+  seed: 42
+
+baselines:
+  use_rainfall: true                  # give SVM/DT/RF/MLP rainfall totals as extra features
+
+train:
+  epochs: 50
+  batch_size: 32
+  lr: 0.001
+  patience: 10
+  dropout: 0.2                        # base paper: 0.2
+  l2: 0.0001                         # base paper: L2 = 0.01 (applied to the dense layers)
+  seed: 42
+
+explain:
+  repeats: 10                         # shuffles per input for permutation importance
+
+map:
+  date: "2018-08-16"                  # rainfall scenario used for the map
+  stride: 4                           # predict every 4th pixel (120 m map)
+  thresholds: [0.33, 0.66]            # low / medium / high
+  batch_size: 1024

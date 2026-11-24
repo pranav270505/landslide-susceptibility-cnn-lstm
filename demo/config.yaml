@@ -1,0 +1,67 @@
+study_area:
+  name: DEMO
+  bbox:
+  - 76.95
+  - 9.95
+  - 77.07
+  - 10.07
+  crs: EPSG:32643
+  resolution: 30
+inventory:
+  dir: data/raw/inventory
+  default_event_date: '2018-08-16'
+  date_column: null
+  lat_column: null
+  lon_column: null
+rainfall:
+  start: '2010-01-01'
+  end: '2018-12-31'
+  window_days: 30
+  cell_deg: 0.1
+ndvi:
+  date_range: 2018-01-01/2018-03-31
+  max_cloud: 10
+  max_scenes: 12
+roads:
+  classes: motorway|trunk|primary|secondary|tertiary|unclassified
+factors:
+  stream_threshold_cells: 300
+samples:
+  patch_size: 32
+  negative_buffer_m: 300
+  temporal_negative_fraction: 0.5
+  temporal_negative_years:
+  - 2010
+  - 2016
+  temporal_negative_months:
+  - 6
+  - 7
+  - 8
+  - 9
+  split_method: block
+  block_km: 1.5
+  split:
+  - 0.7
+  - 0.15
+  - 0.15
+  max_positives: null
+  seed: 42
+baselines:
+  use_rainfall: true
+train:
+  epochs: 25
+  batch_size: 32
+  lr: 0.001
+  patience: 8
+  dropout: 0.2
+  l2: 0.01
+  seed: 42
+explain:
+  repeats: 10
+map:
+  date: '2018-08-16'
+  stride: 4
+  thresholds:
+  - 0.33
+  - 0.66
+  batch_size: 1024

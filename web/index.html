@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Landslide CNN-LSTM · Team 7</title>
+<link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#F2EEE4;--panel:#E4DCD0;--ink:#2B2420;--muted:#6f6252;--line:#c9bfaf;--accent:#B85042;--amber:#C97B2E;--green:#4C7A5D;--bar:#8A7B68;--hero:#2B2420;
+--serif:Cambria,Georgia,serif;--mono:"Roboto Mono",ui-monospace,Consolas,monospace}
+@media(prefers-color-scheme:dark){:root{--bg:#2B2420;--panel:#3A342E;--ink:#E4DCD0;--muted:#b0a492;--line:#4d453d;--bar:#9A8C78;--hero:#211b17;--accent:#d06a5b}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 var(--serif)}
+.wrap{max-width:1100px;margin:0 auto;padding:0 20px}
+header{background:var(--hero);color:#E4DCD0;padding:40px 0 34px}
+.tag{font:500 12px var(--mono);letter-spacing:.08em;color:#B0A492;margin:0 0 14px}
+h1{font:700 clamp(26px,4vw,40px)/1.15 var(--serif);margin:0 0 10px}header p.l{margin:0;color:#d8cdbb;max-width:44em}
+section{padding:36px 0 4px}h2{font:700 24px var(--serif);margin:0 0 6px}.sub{color:var(--muted);margin:0 0 18px;max-width:46em}
+.panel{background:var(--panel);border-radius:6px;padding:18px}
+.live{display:grid;grid-template-columns:280px 1fr 300px;gap:16px}
+@media(max-width:960px){.live{grid-template-columns:1fr}}
+label{display:block;font:500 12px var(--mono);color:var(--muted);margin:14px 0 5px}label:first-child{margin-top:0}
+select,input{width:100%;font:14px var(--mono);padding:8px;border:1px solid var(--bar);border-radius:3px;background:var(--bg);color:var(--ink)}
+input[type=range]{padding:0}
+.btns{display:flex;gap:6px;margin-top:14px}
+button{font:500 12px var(--mono);padding:9px 10px;border-radius:3px;border:1px solid var(--bar);background:transparent;color:var(--ink);cursor:pointer}
+button.p{background:var(--ink);color:var(--bg);border-color:var(--ink);flex:1}button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.chip{display:inline-block;font:500 12px var(--mono);padding:4px 8px;border-radius:3px;color:#F2EEE4;background:var(--bar)}
+.chip.ls{background:var(--accent)}.chip.no{background:var(--green)}
+.maps{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px}
+.maps figure{margin:0;text-align:center;font:12px var(--mono);color:var(--muted)}
+canvas{width:100%;aspect-ratio:1;image-rendering:pixelated;border-radius:3px;background:var(--bg)}
+svg text{font:10px var(--mono);fill:var(--muted)}
+.pr{margin:0 0 14px}.pr .h{display:flex;justify-content:space-between;font-size:14px}.pr .h b{font:500 13px var(--mono)}
+.tr{position:relative;height:14px;background:rgba(138,123,104,.25);border-radius:2px;margin-top:4px}
+.tr i{display:block;height:100%;background:var(--bar);border-radius:2px;transition:width .25s}.pr.hy .tr i{background:var(--accent)}
+.tr:after{content:"";position:absolute;left:50%;top:-3px;bottom:-3px;border-left:1px dashed var(--ink)}
+.small{font:12px/1.5 var(--mono);color:var(--muted)}.err{color:var(--accent);font:13px var(--mono);min-height:20px;margin:8px 0 0}
+table{border-collapse:collapse;width:100%;font-size:14px}th,td{padding:8px 10px;border-bottom:1px solid var(--line);text-align:left}
+th{font:500 12px var(--mono);color:var(--muted)}tr.hy td{font-weight:700}.scroll{overflow-x:auto}
+.gal{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:14px}
+.gal figure{margin:0;background:var(--panel);border-radius:6px;padding:12px}.gal img{width:100%;display:block;border-radius:3px;background:#fff}
+.gal figcaption,.files a{font:12px var(--mono);margin-top:8px;color:var(--muted)}
+.files{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}.files a{color:var(--ink);border:1px solid var(--bar);border-radius:3px;padding:6px 9px;text-decoration:none;margin:0}
+.imp{display:grid;grid-template-columns:170px 1fr 56px;gap:10px;align-items:center;font-size:14px;padding:3px 0}
+.imp .t{height:12px;background:rgba(138,123,104,.25);border-radius:2px}.imp .t i{display:block;height:100%;background:var(--amber);border-radius:2px}.imp span:last-child{font:500 12px var(--mono);text-align:right}
+footer{margin:40px 0 28px;padding-top:18px;border-top:1px solid var(--line)}
+</style>
+</head>
+<body>
+<header><div class="wrap">
+  <p class="tag">TEAM 7 · CSE-DS · PREDICTIVE ANALYSIS</p>
+  <h1>Landslide CNN-LSTM, live</h1>
+  <p class="l" id="intro">Connecting to the model server…</p>
+</div></header>
+<main class="wrap">
+
+<section>
+  <h2>Run the model</h2>
+  <p class="sub">Pick a held-out location. The trained networks predict from its terrain patch and 30 days of rainfall. Change the rainfall to see how each model responds.</p>
+  <div class="live">
+    <div class="panel">
+      <label for="kind">Sample type</label>
+      <select id="kind"><option value="">All</option><option value="landslide">Landslide</option><option value="neg_spatial">Spatial negative</option><option value="neg_temporal">Temporal negative</option></select>
+      <label for="pos" id="posl">Sample</label><input type="range" id="pos" min="0" max="0" value="0">
+      <label for="date">Use rainfall from another date</label><input type="date" id="date">
+      <label for="scale" id="scl">Rainfall multiplier: 1.0×</label><input type="range" id="scale" min="0" max="3" step="0.1" value="1">
+      <div class="btns"><button id="rand" class="p">Random sample</button><button id="reset">Reset</button></div>
+      <p class="err" id="err" role="status"></p>
+    </div>
+    <div class="panel">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px"><span class="small" id="loc"></span><span class="chip" id="truth"></span></div>
+      <div class="maps" id="maps"></div>
+      <svg id="rain" viewBox="0 0 600 150" width="100%" role="img" aria-label="Daily rainfall for the 30 days before the date"></svg>
+      <div class="small" id="rainl"></div>
+    </div>
+    <div class="panel">
+      <b style="font:700 17px var(--serif)">Live predictions</b>
+      <p class="small" style="margin:4px 0 14px">Probability of landslide. Dashed line is the 0.5 threshold.</p>
+      <div id="live"></div>
+      <b style="font:700 15px var(--serif)">Saved test predictions</b>
+      <div id="stored" style="margin-top:10px"></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>Test-set results</h2>
+  <p class="sub" id="comp"></p>
+  <div class="panel scroll"><table id="res"></table></div>
+</section>
+
+<section>
+  <h2>What the hybrid relies on</h2>
+  <p class="sub">Drop in test AUC when an input is shuffled.</p>
+  <div class="panel" id="imp" style="columns:2 360px;column-gap:40px"></div>
+</section>
+
+<section>
+  <h2>All outputs</h2>
+  <p class="sub">Everything the pipeline wrote to <code>outputs/</code>.</p>
+  <div class="gal" id="gal"></div><div class="files" id="files"></div>
+</section>
+<footer class="small">Predictions run on held-out spatial blocks only. Figures and tables come straight from outputs/.</footer>
+</main>
+<script>
+const $=s=>document.querySelector(s),LBL={landslide:"Landslide",neg_spatial:"Spatial negative",neg_temporal:"Temporal negative"};
+const NICE={"CNN-LSTM (hybrid)":"hybrid"};
+let S,view=[],M,timer;
+const j=async(u,o)=>{const r=await fetch(u,o),d=await r.json();if(!r.ok)throw new Error(d.error||r.status);return d};
+const pct=v=>v.toFixed(3);
+function bar(name,p,hy,y){const hit=y===undefined?"":(((p>=.5)===(y===1))?" ✓":" ✗");
+ return `<div class="pr ${hy?"hy":""}"><div class="h"><span>${name}</span><b>${pct(p)}${hit}</b></div><div class="tr"><i style="width:${p*100}%"></i></div></div>`}
+function ramp(v){const a=[228,220,208],b=[43,36,32];return a.map((x,i)=>Math.round(x+(b[i]-x)*v))}
+function canvas(name,g){const n=g.length,c=document.createElement("canvas");c.width=c.height=n;const x=c.getContext("2d"),im=x.createImageData(n,n);
+ g.forEach((row,r)=>row.forEach((v,k)=>{const o=(r*n+k)*4,[R,G,B]=ramp(v);im.data.set([R,G,B,255],o)}));x.putImageData(im,0,0);
+ const f=document.createElement("figure");f.append(c);f.insertAdjacentHTML("beforeend",`<figcaption>${name}</figcaption>`);return f}
+function rain(mm){const W=600,H=150,m=Math.max(20,...mm),bw=W/mm.length;
+ $("#rain").innerHTML=mm.map((v,i)=>{const h=v/m*(H-28);return `<rect x="${i*bw+2}" y="${H-18-h}" width="${bw-4}" height="${h}" fill="var(--accent)" opacity="${i>=mm.length-5?1:.55}"/>`}).join("")
+ +`<text x="2" y="${H-4}">30 days before</text><text x="${W-2}" y="${H-4}" text-anchor="end">event day</text><text x="2" y="10">max ${m.toFixed(0)} mm</text>`;
+ $("#rainl").textContent=`Total ${mm.reduce((a,b)=>a+b,0).toFixed(0)} mm over ${mm.length} days · last 5 days highlighted`}
+async function run(){const i=view[+$("#pos").value];if(i===undefined)return;
+ const b={i,scale:+$("#scale").value};if($("#date").value)b.date=$("#date").value;
+ try{const r=await j("/api/predict",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(b)});$("#err").textContent="";
+  $("#loc").textContent=`${r.lat.toFixed(4)}°N, ${r.lon.toFixed(4)}°E · event ${r.sample_date}`;
+  const t=$("#truth");t.textContent=`Truth: ${r.truth?"landslide":"no landslide"} (${LBL[r.kind]})`;t.className="chip "+(r.truth?"ls":"no");
+  $("#maps").replaceChildren(...Object.entries(r.patch).map(([n,g])=>canvas(n+" (scaled)",g)));rain(r.rain_mm);
+  $("#live").innerHTML=Object.entries(r.probs).map(([k,p])=>bar(r.names[k],p,k==="hybrid")).join("");
+  const edited=b.date||b.scale!==1;
+  $("#stored").innerHTML=Object.entries(r.stored).map(([k,p])=>bar(k,p,k===r.names.hybrid,r.truth)).join("")+(edited?`<p class="small">Saved predictions use the original rainfall.</p>`:"")
+ }catch(e){$("#err").textContent=e.message}}
+const go=()=>{clearTimeout(timer);timer=setTimeout(run,120)};
+function filter(){const k=$("#kind").value;view=S.kind.map((x,i)=>i).filter(i=>!k||S.kind[i]===k);const p=$("#pos");p.max=Math.max(view.length-1,0);p.value=0;label();go()}
+function label(){$("#posl").textContent=`Sample ${+$("#pos").value+1} of ${view.length}`}
+async function init(){
+ try{M=await j("/api/meta");S=await j("/api/samples")}catch(e){$("#intro").textContent="Server not reachable. Start it with: python server.py";return}
+ const c=M.counts;$("#intro").textContent=`${M.study} · models loaded: ${M.models.join(", ")}.`;
+ $("#comp").textContent=`Test set: ${c.landslide+c.neg_spatial+c.neg_temporal} samples (${c.landslide} landslide, ${c.neg_spatial} spatial negatives, ${c.neg_temporal} temporal negatives) from held-out spatial blocks.`;
+ $("#kind").onchange=filter;$("#pos").oninput=()=>{label();go()};$("#date").onchange=go;
+ $("#scale").oninput=e=>{$("#scl").textContent=`Rainfall multiplier: ${(+e.target.value).toFixed(1)}×`;go()};
+ $("#rand").onclick=()=>{$("#pos").value=Math.floor(Math.random()*view.length);label();go()};
+ $("#reset").onclick=()=>{$("#date").value="";$("#scale").value=1;$("#scale").oninput({target:$("#scale")})};
+ filter();
+ const R=M.results;if(R.length){const cols=Object.keys(R[0]);$("#res").innerHTML=`<tr>${cols.map(c=>`<th>${c}</th>`).join("")}</tr>`+R.map(r=>`<tr class="${r.Model.includes("hybrid")?"hy":""}">${cols.map(c=>`<td>${r[c]}</td>`).join("")}</tr>`).join("")}
+ const E=M.explain.filter(r=>r.group==="factor").sort((a,b)=>b.auc_drop-a.auc_drop),mx=Math.max(...E.map(r=>r.auc_drop),.001);
+ $("#imp").innerHTML=E.map(r=>`<div class="imp"><span>${r.input}</span><span class="t"><i style="width:${Math.max(r.auc_drop,0)/mx*100}%"></i></span><span>${r.auc_drop.toFixed(3)}</span></div>`).join("");
+ const img=M.files.filter(f=>/\.(png|jpe?g)$/i.test(f)),oth=M.files.filter(f=>!img.includes(f));
+ $("#gal").innerHTML=img.map(f=>`<figure><a href="/outputs/${f}"><img src="/outputs/${f}" alt="${f}" loading="lazy"></a><figcaption>${f}</figcaption></figure>`).join("");
+ $("#files").innerHTML=oth.map(f=>`<a href="/outputs/${f}" download>${f}</a>`).join("")}
+init();
+</script>
+</body>
+</html>

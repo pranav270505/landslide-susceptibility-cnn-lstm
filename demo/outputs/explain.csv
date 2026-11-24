@@ -1,0 +1,21 @@
+group,input,auc_drop,std,share_pct
+factor,Elevation,0.0026,0.0034,0.5112
+factor,Slope,0.1531,0.0292,30.3524
+factor,Aspect (north-south),0.016,0.0042,3.1776
+factor,Aspect (east-west),0.0077,0.0038,1.5337
+factor,TWI,0.0012,0.0032,0.236
+factor,SPI,0.0156,0.0053,3.0832
+factor,NDVI,0.0012,0.0036,0.2281
+factor,Mean annual rainfall,-0.0085,0.0051,0.0
+factor,Distance to rivers,-0.0,0.0022,0.0
+factor,Distance to roads,-0.0031,0.0043,0.0
+factor,Land use / land cover,-0.0037,0.0065,0.0
+factor,Rainfall (30-day sequence),0.3071,0.0349,60.8778
+branch,All terrain inputs (CNN branch),0.2737,0.0519,47.1185
+branch,Rainfall sequence (LSTM branch),0.3071,0.0349,52.8815
+rain_window,0-4 days before,0.0009,0.0009,0.516
+rain_window,5-9 days before,0.1743,0.0364,98.5641
+rain_window,10-14 days before,0.0013,0.0017,0.7628
+rain_window,15-19 days before,-0.0002,0.0003,0.0
+rain_window,20-24 days before,0.0003,0.0002,0.1571
+rain_window,25-29 days before,-0.0001,0.0004,0.0
